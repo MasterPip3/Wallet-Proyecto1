@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="./css/style.css">
 
-    <title>Alke Wallet | Login</title>
+    <title>Alke Wallet | Registro</title>
 </head>
 <body>
     
@@ -21,12 +21,24 @@
                         <hr>
                         <div class="row justify-content-around">
                             <div class="col-7 mb-5 form">
-                                <form action="" id="formularioLogin">
+                                <form action="" id="formularioRegistro">
                                     <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="registroNombre" class="form-label">Nombre</label>
+                                            <input type="text" class="form-control" id="registroNombre" placeholder="Nombre" aria-label="First name">
+                                        </div>
+                                        <div class="col mb-3">
+                                            <label for="registroApellido" class="form-label">Apellido</label>
+                                            <input type="text" class="form-control" id="registroApellido" placeholder="Apellido" aria-label="Last name">
+                                        </div>
                                         <div class="mb-3">
                                             <label for="registroUsuario" class="form-label">Tu nombre de usuario</label>
                                             <input type="text" class="form-control" id="registroUsuario" placeholder="Usuario">
-                                        </div>                                        
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="registroEmail" class="form-label">Correo electrónico</label>
+                                            <input type="email" class="form-control" id="registroEmail" placeholder="email@ejemplo.com">
+                                        </div>
                                         <div class="mb-3">
                                             <label for="registroPassword" class="form-label">Ingresa una contraseña</label>
                                             <input type="password" class="form-control" id="registroPassword" placeholder="Password1234">
@@ -36,15 +48,15 @@
                                             <input type="password" class="form-control" id="confirmacionPassword" placeholder="Password1234">
                                         </div>
                                         <div class="row">
-                                            <div class="botones-login d-flex align-content-center justify-content-evenly">
+                                            <div class="botones-login d-flex align-content-center justify-content-evenly">                                                
                                                 <div class="btn-registrarse">
-                                                    <a type="button" href="registro.html" class="btn btn-green">Registrarse</a>
+                                                    <a type="button" id="btnRegistro" href="login.html" class="btn btn-green">Registrarse</a>
                                                     <p class="p-login user-select-none">Crea tu cuenta</p>
                                                 </div>
                                                 <div class="btn-iniciar-sesion">
-                                                    <a type="button" id="btnLogin" href="menu.html" class="btn btn-confirmar">Iniciar sesión</a>
+                                                    <a type="button" href="login.html" class="btn btn-confirmar">Iniciar sesión</a>
                                                     <p class="p-login user-select-none">Si tienes una cuenta</p>
-                                                </div>                                                
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="./css/style.css">
 
     <title>Alke Wallet | Transferir</title>
 </head>
 <body>
     <header>
         <div class="nav-bar">
-            <nav class="navbar bg-body-tertiary fixed-top" data-bs-theme="dark">
+            <nav class="navbar fixed-top" data-bs-theme="dark">
                 <div class="container-fluid">
-                    <img src="/img/magnific__logo-moderno-wallet-AWBnofondo.png" alt="Logo" width="80px" class="d-inline-block align-text-top">
-                    <h1 class="navbar-brand">Alke Wallet</h1>
+                    <img src="./img/magnific__logo-moderno-wallet-AWBnofondo.png" alt="Logo" width="80" class="d-inline-block align-text-top">
+                    <h1 class="navbar-brand user-select-none">Alke Wallet</h1>
                     <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                        <span class="navbar-toggler-icon mx-3"></span>
                     </button>
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                         <div class="offcanvas-header">
@@ -27,7 +27,7 @@
                         <div class="offcanvas-body">
                             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="transferir" href="#">Transferir</a>
+                                    <a class="nav-link active" aria-current="page" href="sendmoney.html">Transferir</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="menu.html">Menú</a>
@@ -39,7 +39,7 @@
                                     <a class="nav-link" href="transaction.html">Movimientos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="btn btn-success cerrar-sesion" id="btn-cerrar-ses">Cerrar sesión</button>
+                                    <a href="index.html" class="nav-link cerrar-sesion btn btn-success" id="btn-cerrar-ses">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -49,13 +49,188 @@
         </div>
     </header>
     <main>
-        
+        <div class="container-fluid main-container">
+            <div class="row justify-content-evenly row-central">
+                <div class="col-md-2 lateral">
+                    <div id="carouselLeft" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                            <img src="./img/magnific_grayscale-bglat1.png" class="d-block w-100" alt="imagen lateral">
+                            </div>
+                            <div class="carousel-item">
+                            <img src="./img/fondo-login.png" class="d-block w-100" alt="imagen lateral">
+                            </div>
+                            <div class="carousel-item">
+                            <img src="./img/magnific_grayscale-bglat2.png" class="d-block w-100" alt="imagen lateral">
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8 central d-flex flex-column justify-content-center align-items-center">
+                    <div class="container contenido-central row-gap-2">
+                        <div class="row justify-content-center bienvenida-row">
+                            <div class="card shadow-sm card-bienvenida card-principal w-100">
+                                <h2><span class="h2-usuario nombreusuario user-select-none" id="usuarioMovimientos"></span>, transfiere a tus contactos</h2>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center saldo-row w-100 card-principal">
+                            <div class="card-transfer-top">
+                                <div class="card col-12 m-md-2 shadow-sm text-center wallet-balance justify-content-evenly">
+                                    <div class="card-header w-100">
+                                        <h2 class="text-uppercase mt-2 mb-2 user-select-none h2-list-mov">Portal de transferencias</h2>
+                                    </div>
+                                    <hr>
+                                    <div class="row align-items-center justify-content-evenly">
+                                        <div class="col-md-5">
+                                            <div class="card div-saldo shadow-sm">
+                                                <h2 class="user-select-none">Tu saldo disponible es</h2>
+                                                <div>
+                                                    <span id="saldo" class="saldo-valor user-select-none">$0</span>
+                                                    <p class="mb-2 mt-2 user-select-none">Saldo actual</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="card div-saldo shadow-sm">
+                                                <div class="modal-transferir">
+                                                    <button type="button" class="btn btn-green" data-bs-toggle="modal" data-bs-target="#modal-transferencias">
+                                                        Transferir
+                                                    </button>
+                                                    <div class="modal" id="modal-transferencias" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Transferencias</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <nav class="navbar bg-body-tertiary">
+                                                                        <div class="container-fluid">
+                                                                            <form class="container-fluid mb-2" role="search">
+                                                                                <input class="form-control me-2" type="search" placeholder="Busca tu contacto" aria-label="Search" id="buscadorContactos"/>
+                                                                                <button class="btn btn-outline-success" type="button">Buscar</button>
+                                                                                <hr>
+                                                                                <input class="form-control me-2" type="number" placeholder="$0" aria-label="input" id="numTransferencia"/>
+                                                                                <p class="text-transferencia user-select-none">Ingresa el monto de la transferencia</p>
+                                                                            </form>
+                                                                        </div>
+                                                                    </nav>
+                                                                    <div class="visor-directo">
+                                                                        <p class="visor-p">El saldo después de la transferencia será</p>
+                                                                        <p class="span-transfer"><span class="span-visor-p" id="visorSpanTransfer">$ </span></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer align-content-center justify-content-center">
+                                                                    <button type="button" class="btn btn-secondary btn-cerrar" data-bs-dismiss="modal">Cerrar</button>
+                                                                    <button type="button" id="btnTransferir" class="btn btn-confirmar">Transferir</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 d-flex justify-content-center">
+                                                <div class="vr mx-2"></div>
+                                                </div>
+                                                <div class="btnCrearContacto">
+                                                    <div class="modal-crearContacto">
+                                                        <button type="button" class="btn btn-confirmar" data-bs-toggle="modal" data-bs-target="#modal-nvoContacto">
+                                                            Crear nuevo contacto
+                                                        </button>
+                                                        <div class="modal" id="modal-nvoContacto" tabindex="-1">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Nuevo contacto</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <nav class="navbar bg-body-tertiary">
+                                                                            <div class="container-fluid mb-2">
+                                                                                <label for="nombreContacto" class="form-label">Ingresa el nombre de tu contacto</label>
+                                                                                <input class="form-control" type="text" placeholder="Nombre contacto" id="nombreContacto" aria-label="default input example">
+                                                                            </div>
+                                                                            <div class="container-fluid mb-2">
+                                                                                <label for="emailContacto" class="form-label">Ingresa su correo electrónico</label>
+                                                                                <input class="form-control" type="email" placeholder="Correo.electrónico@ejemplo.com" id="emailContacto" aria-label="default input example">
+                                                                            </div>
+                                                                        </nav>
+                                                                    </div>
+                                                                    <div class="modal-footer align-content-center justify-content-center">
+                                                                        <button type="button" class="btn btn-secondary btn-cerrar" data-bs-dismiss="modal">Cerrar</button>
+                                                                        <button type="button" id="btnNvoContacto" class="btn btn-confirmar">Crear contacto</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alerta-fondos">
+                                        <div class="alert alert-danger" role="alert" id="alertaFondos">
+                                            <p>No es posible hacer esta transferencia, fondos insuficientes.</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="contenedor-ul">
+                                        <ul class="list-group list-group-flush user-select-none lista-contactos" id="listaContactos">
+                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, facilis?</li>
+                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, sed?</li>
+                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, accusamus.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-evenly align-content-center accesos-row accesos-wrapp g-1">
+                            <div class="col-12 col-md-4 d-flex justify-content-center bg-card">
+                                <div class="card card-accesos align-items-center justify-content-center">
+                                    <h3 class="h-accesos user-select-none">Menú</h3>
+                                    <a href="menu.html" class="btn btn-outline-primary btn-card">Ir</a>
+                                    <p class="p-card text-center user-select-none">Ir al menú</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 d-flex justify-content-center bg-card">
+                                <div class="card card-accesos align-items-center justify-content-center">
+                                    <h3 class="h-accesos user-select-none">Depositar</h3>
+                                    <a href="deposit.html" class="btn btn-outline-primary btn-card">Ir</a>
+                                    <p class="p-card text-center user-select-none">Ingresa dinero a tu cuenta</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4 d-flex justify-content-center bg-card">
+                                <div class="card card-accesos align-items-center justify-content-center">
+                                    <h3 class="h-accesos user-select-none">Historial</h3>
+                                    <a href="transaction.html" class="btn btn-outline-primary btn-card">Ir</a>
+                                    <p class="p-card text-center user-select-none">Historial de transacciones</p>
+                                </div>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 lateral">
+                    <div id="carouselRight" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                            <img src="./img/fondo-login.png" class="d-block w-100" alt="imagen lateral">
+                            </div>
+                            <div class="carousel-item">
+                            <img src="./img/magnific_grayscale-bglat2.png" class="d-block w-100" alt="imagen lateral">
+                            </div>
+                            <div class="carousel-item">
+                            <img src="./img/magnific_grayscale-bglat1.png" class="d-block w-100" alt="imagen lateral">
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div> 
     </main>
     <footer>
-        <p class="copyright">2026 © Felipe Calderón. Derechos reservados ®</p>
+        <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    
 </body>
 </html>
