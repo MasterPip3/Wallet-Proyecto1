@@ -147,6 +147,10 @@ main {
     margin-top: 2vh;
 }
 
+.lista-usuarios {
+    display: none;
+}
+
 .row-central {
     flex: 1;
 }
@@ -162,7 +166,7 @@ main {
 }
 
 .card-bienvenida h2 {
-    font-size: clamp(1rem, 4vw, 2rem);
+    font-size: x-large;
 }
 
 .card-header {
@@ -195,7 +199,7 @@ main {
 .cuadro-movimientos {
     max-height: 435px;
 }
-c
+
 .cuadro-transferencias {
     max-height: 435px;
 }
@@ -217,7 +221,7 @@ c
 }
 
 .saldo-valor {
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     color: green;
 }
@@ -241,7 +245,6 @@ c
 
 .visor-directo {
     min-height: 40px;
-    display: none;
 }
 
 .vr {
@@ -254,7 +257,7 @@ c
 
 .contenedor-ul {
     max-height: 160px;
-    overflow: scroll;
+    overflow-y: auto;
 }
 
 

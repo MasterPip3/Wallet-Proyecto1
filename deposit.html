@@ -39,7 +39,7 @@
                                     <a class="nav-link" href="transaction.html">Movimientos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="index.html" class="nav-link cerrar-sesion btn btn-success" id="btn-cerrar-ses">Cerrar sesión</a>
+                                    <a href="#" class="nav-link cerrar-sesion btn btn-success" id="btnCerrarSesion">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -71,7 +71,7 @@
                         <div class="row justify-content-center w-100 flex-grow-1">
                             <div class="col-12 text-start deposito-row card-principal">
                                 <div class="card wallet-balance div-saldo shadow-sm">
-                                    <h2 class="user-select-none card-header text-center"><span class="nombreusuario user-select-none" id="usuarioBienvenida"></span>, tu saldo disponible es</h2>
+                                    <h2 class="user-select-none card-header text-center"><span class="nombreusuario user-select-none" id="nombreUsuario"></span>, tu saldo disponible es</h2>
                                     <div>
                                     <span id="saldo" class="saldo-valor user-select-none">$0</span>
                                     <p class="mb-2 mt-2 user-select-none">Saldo actual</p>
@@ -85,14 +85,12 @@
                                     </div>
                                     <div class="text-cantidad">
                                         <label for="depositoCantidad">
-                                        <input type="number" class="num-cantidad" min="1" id="depositoCantidad" placeholder="0">
+                                        <input type="number" class="num-cantidad" min="1" id="depositoCantidad" placeholder="$">
                                         </label>
                                     </div>
                                     <div class="visor-directo">
-                                        <p class="visor-p">El saldo después del depósito será $ <span class="span-visor-p" id="visor-span-deposit">.</span></p>
-                                        <div class="alert alert-success" role="alert" id="depositoExitoso">
-                                            El depósito ha sido realizado con éxito.
-                                        </div>
+                                        <p class="visor-p">El saldo luego del depósito será $ <span class="span-visor-p" id="visorSpanDepositar"></span>.</p>
+                                        <div id="depositoMensaje"></div>
                                     </div>
                                     <div class="modal-confirmar">
                                         <button type="button" class="btn btn-confirmar" data-bs-toggle="modal" data-bs-target="#modal-deposit-confirm">
@@ -106,11 +104,11 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>¿Estás seguro que quieres depositar $<span id="input-confirmar-modal"></span>?</p>
+                                                        <p><span id="montoConfirmarDepositoModal"></span></p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary btn-cerrar" data-bs-dismiss="modal">Cerrar</button>
-                                                        <button type="button" class="btn btn-confirmar" id="btn-confirmar-deposito">Confirmar</button>
+                                                        <button type="button" class="btn btn-confirmar" data-bs-dismiss="modal" id="btnConfirmarDeposito">Confirmar</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -166,7 +164,117 @@
     <footer>
         <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
-    
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    /* Confirmar login*/
+    const confirmLog = localStorage.getItem("usuarioLogueado") || false;
+    if (!confirmLog){
+
+        window.location.href = "index.html";
+    }
+
+
+    /* Cerrar sesión*/
+    const cerrarSesion = document.getElementById("btnCerrarSesion");
+    cerrarSesion.addEventListener("click",function(event) {
+
+        event.preventDefault();
+        localStorage.removeItem("usuarioLogueado");
+        window.location.href = "index.html";
+    });
+
+
+    /* Mostrar nombre de usuario en pantallas*/
+    const usuarioInvisible = localStorage.getItem("usuarioLogueado");
+    if (usuarioInvisible !== "") {
+        const usuarios = JSON.parse(usuarioInvisible);
+        const usuarioVisible = usuarios.usuario;
+        document.getElementById("nombreUsuario").textContent = usuarioVisible;
+    }
+
+    /* Mostrar saldo actual dinámicamente*/
+    function mostrarSaldo(){
+        const saldoInvisible = localStorage.getItem("usuarioLogueado");
+        if (saldoInvisible !== null){
+            const saldoGet = JSON.parse(saldoInvisible);
+            const saldoVisible = saldoGet.saldo;
+            document.getElementById("saldo").textContent = "$" + saldoVisible.toLocaleString("es-CL");
+        }
+    }
+    mostrarSaldo();
+
+    /* Preparar usuario para modificar su dato en memoria*/
+    const usuario = localStorage.getItem("usuarios");
+    const usuarioCompararLocal = JSON.parse(usuario);
+    let usuarioLog = localStorage.getItem("usuarioLogueado");
+    let usuarioComparaLog = JSON.parse(usuarioLog);
+
+    const usuarioActualizado = usuarioCompararLocal.find(u => u.usuario === usuarioComparaLog.usuario);
+
+
+    /* Saldo interactivo en visor*/
+    const inputDeposito = document.getElementById("depositoCantidad");
+    inputDeposito.addEventListener("input", function(){
+        const monto = Number(inputDeposito.value) || 0;
+        const saldoInteractivo = usuarioActualizado.saldo + monto;
+        document.getElementById("visorSpanDepositar").textContent = saldoInteractivo.toLocaleString("es-CL");
+    });
+
+
+    /* Modal de confirmación del depósito*/
+    const botonDepositar = document.querySelector(`[data-bs-target="#modal-deposit-confirm"]`);
+    botonDepositar.addEventListener("click",function(){
+        const montoModal = Number(inputDeposito.value) || 0;
+        document.getElementById("montoConfirmarDepositoModal").textContent = `¿Estás seguro de depositar $${montoModal}?`;
+    });
+
+
+    /* Confirmar depósito, crear movimiento en historial y guardar en memoria*/
+    document.getElementById("btnConfirmarDeposito").addEventListener("click", function(){
+        const monto = Number(inputDeposito.value) || 0;
+        if (monto >= 1000){
+
+            usuarioActualizado.saldo += monto;
+            usuarioComparaLog.saldo = usuarioActualizado.saldo;
+
+            /* Crear movimiento en historial */
+            const movimiento = {
+                tipo: "Depósito",
+                monto: monto,
+                fecha: new Date().toLocaleString()
+            };
+
+            usuarioComparaLog.movimientos.push(movimiento);
+            usuarioActualizado.movimientos.push(movimiento);
+
+            /* Actualizar datos guardados */
+            localStorage.setItem("usuarios", JSON.stringify(usuarioCompararLocal));
+            localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioComparaLog));
+
+            document.getElementById("depositoMensaje").innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    El depósito ha sido efectuado correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            mostrarSaldo();
+
+        } else {
+            document.getElementById("depositoMensaje").innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    El monto del depósito debe ser mayor a $1000 pesos.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+    });
+
+})
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -16,8 +16,11 @@
             <div class="row justify-content-evenly login-row">
                 <div class="col-12 col-md-8 central d-flex flex-column justify-content-center align-items-center">
                     <div class=" col-12 m-md-2 text-center justify-content-evenly">
-                        <h2 class="header-principal user-select-none">Bienvenido a Alke Wallet</h2>
-                        <img src="./img/magnific__logo-moderno-wallet-AWBnofondo.png" alt="logo" class="img-login">
+                        <div>
+                            <h2 class="header-principal user-select-none">Bienvenido a Alke Wallet</h2>
+                            <img src="./img/magnific__logo-moderno-wallet-AWBnofondo.png" alt="logo" class="img-login">                                                            
+                            <div id="mensajes"></div>
+                        </div>
                         <hr>
                         <div class="row justify-content-around">
                             <div class="col-7 mb-5 form">
@@ -50,7 +53,7 @@
                                         <div class="row">
                                             <div class="botones-login d-flex align-content-center justify-content-evenly">                                                
                                                 <div class="btn-registrarse">
-                                                    <a type="button" id="btnRegistro" href="login.html" class="btn btn-green">Registrarse</a>
+                                                    <button type="submit" id="btnRegistro" class="btn btn-green">Registrarse</button>
                                                     <p class="p-login user-select-none">Crea tu cuenta</p>
                                                 </div>
                                                 <div class="btn-iniciar-sesion">
@@ -59,7 +62,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>                                    
                                 </form>    
                             </div>
                         </div>
@@ -102,7 +105,83 @@
     <footer>
         <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
-    
+
+<script>
+/* PAGINA REGISTRO */
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("formularioRegistro").addEventListener("submit",function(event){
+        event.preventDefault();
+
+        const nombre = document.getElementById("registroNombre").value;
+        const apellido = document.getElementById("registroApellido").value;
+        const usuario = document.getElementById("registroUsuario").value;
+        const email = document.getElementById("registroEmail").value
+        const contraseña = document.getElementById("registroPassword").value;
+        const confirmPass = document.getElementById("confirmacionPassword").value;
+        const listaUsuarios = document.getElementById("listaUsuarios")
+
+        if (
+            !nombre.trim() ||
+            !apellido.trim() ||
+            !usuario.trim() ||
+            !email.trim() ||
+            !contraseña.trim() ||
+            !confirmPass.trim() 
+        ) {
+            document.getElementById("mensajes").innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Todos los campos son obligatorios.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            `;
+            return;
+        }
+
+        if (contraseña !== confirmPass){
+            document.getElementById("mensajes").innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Las contraseñas no coinciden.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            `
+            return;
+        };
+
+        const nuevoUsuario = {
+            nombre,
+            apellido,
+            usuario,
+            email,
+            contraseña,
+            saldo: 500,
+            contactos: [],
+            movimientos: []
+        }
+
+        let usuarios =JSON.parse(localStorage.getItem("usuarios")) || [];
+
+        usuarios.push(nuevoUsuario);
+
+        localStorage.setItem("usuarios",JSON.stringify(usuarios));
+
+        document.getElementById("mensajes").innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+                Registro completado. Redirigiendo...
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            `
+        setTimeout(() =>{
+            window.location.href = "login.html";
+        }, 3000);
+
+    })
+
+})
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

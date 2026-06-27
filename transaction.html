@@ -39,7 +39,7 @@
                                     <a class="nav-link" href="sendmoney.html">Transferir</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="index.html" class="nav-link cerrar-sesion btn btn-success" id="btn-cerrar-ses">Cerrar sesión</a>
+                                    <a href="#" class="nav-link cerrar-sesion btn btn-success" id="btnCerrarSesion">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -70,7 +70,7 @@
                     <div class="container contenido-central">
                         <div class="row justify-content-center bienvenida-row">
                             <div class="card shadow-sm card-bienvenida card-principal w-100">
-                                <h2><span class="h2-usuario nombreusuario user-select-none" id="usuarioMovimientos"></span>, tu historial de movimientos.</h2>
+                                <h2><span class="h2-usuario nombreusuario user-select-none" id="nombreUsuario"></span>, tu historial de movimientos.</h2>
                             </div>
                         </div>
                         <hr>
@@ -81,9 +81,7 @@
                                 </div>
                                 <hr>
                                 <ul class="list-group list-group-flush user-select-none lista-movimientos overflow-scroll" id="listaMovimientos">
-                                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, facilis?</li>
-                                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, sed?</li>
-                                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, accusamus.</li>
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -135,6 +133,78 @@
         <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
     
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+    /* Confirmar login*/
+    const confirmLog = localStorage.getItem("usuarioLogueado") || false;
+    if (!confirmLog){
+
+        window.location.href = "index.html";
+    }
+
+
+    /* Cerrar sesión*/
+    const cerrarSesion = document.getElementById("btnCerrarSesion");
+    cerrarSesion.addEventListener("click",function(event) {
+
+        event.preventDefault();
+        localStorage.removeItem("usuarioLogueado");
+        window.location.href = "index.html";
+    });
+
+
+    /* Mostrar nombre de usuario en pantallas*/
+    const usuarioInvisible = localStorage.getItem("usuarioLogueado");
+    if (usuarioInvisible !== "") {
+        const usuarios = JSON.parse(usuarioInvisible);
+        const usuarioVisible = usuarios.usuario;
+        document.getElementById("nombreUsuario").textContent = usuarioVisible;
+    }
+
+
+    /* Elemento para buscar lista de movimiento en el storage y luego mostrarlo en la lista */
+    function mostrarMovimientos(){
+
+        const lista = document.getElementById("listaMovimientos");
+        lista.innerHTML = "";
+
+        const usuario = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+        if (usuario.movimientos.length === 0){
+
+            lista.innerHTML = `
+                <li class="list-group-item text-center">
+                    Sin movimientos registrados.
+                </li>
+            `;
+
+            return;
+        }
+
+        usuario.movimientos.forEach(function(movimiento){
+
+            const li = document.createElement("li");
+
+            li.className = "list-group-item";
+
+            li.innerHTML = `
+                <strong>${movimiento.tipo}</strong><br>
+                Monto: $${movimiento.monto}<br>
+                Fecha: ${movimiento.fecha}
+            `;
+
+            lista.appendChild(li);
+
+        });
+
+    }
+
+    mostrarMovimientos();
+})
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -39,7 +39,7 @@
                                     <a class="nav-link" href="transaction.html">Movimientos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="index.html" class="nav-link cerrar-sesion btn btn-success" id="btn-cerrar-ses">Cerrar sesión</a>
+                                    <a href="#" class="nav-link cerrar-sesion btn btn-success" id="btnCerrarSesion">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -70,7 +70,7 @@
                     <div class="container contenido-central row-gap-2">
                         <div class="row justify-content-center bienvenida-row">
                             <div class="card shadow-sm card-bienvenida card-principal user-select-none w-100">
-                                <h2>Bienvenido <span class="h2-usuario nombreusuario user-select-none" id="usuarioBienvenida"></span>, te estábamos esperando.</h2>
+                                <h2>Bienvenido <span class="h2-usuario nombreusuario user-select-none" id="nombreUsuario"></span>, te estábamos esperando.</h2>
                             </div>
                         </div>
                         <div class="row justify-content-center saldo-row w-100 card-principal">
@@ -131,7 +131,52 @@
     <footer>
         <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
-    
+
+<script>
+
+/* Elemento para confirmar el login del usuario */
+const confirmLog = localStorage.getItem("usuarioLogueado") || false;
+if (!confirmLog){
+    window.location.href = "index.html";
+}
+
+const cerrarSesion = document.getElementById("btnCerrarSesion");
+cerrarSesion.addEventListener("click",function(event) {
+    event.preventDefault();
+
+    localStorage.removeItem("usuarioLogueado");
+
+    window.location.href = "index.html";
+    }
+
+)
+
+/* Elemento para mostrar el nombre de usuario logueado */
+const usuarioInvisible = localStorage.getItem("usuarioLogueado");
+if (usuarioInvisible !== null) {
+
+    const usuarios = JSON.parse(usuarioInvisible);
+    const usuarioVisible = usuarios.usuario;
+    document.getElementById("nombreUsuario").textContent = usuarioVisible;
+} 
+
+
+/* Elemento para mostrar actualizar el saldo en pantalla */
+
+function mostrarSaldo(){
+    const saldoInvisible = localStorage.getItem("usuarioLogueado");
+    if (saldoInvisible !== null){
+
+        const saldoGet = JSON.parse(saldoInvisible);
+        const saldoVisible = saldoGet.saldo;
+        document.getElementById("saldo").textContent = "$" + saldoVisible.toLocaleString("es-CL");
+    }
+}
+
+mostrarSaldo()
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

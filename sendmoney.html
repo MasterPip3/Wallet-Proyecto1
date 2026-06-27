@@ -39,7 +39,7 @@
                                     <a class="nav-link" href="transaction.html">Movimientos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="index.html" class="nav-link cerrar-sesion btn btn-success" id="btn-cerrar-ses">Cerrar sesión</a>
+                                    <a href="#" class="nav-link cerrar-sesion btn btn-success" id="btnCerrarSesion">Cerrar sesión</a>
                                 </li>
                             </ul>
                         </div>
@@ -70,7 +70,7 @@
                     <div class="container contenido-central row-gap-2">
                         <div class="row justify-content-center bienvenida-row">
                             <div class="card shadow-sm card-bienvenida card-principal w-100">
-                                <h2><span class="h2-usuario nombreusuario user-select-none" id="usuarioMovimientos"></span>, transfiere a tus contactos</h2>
+                                <h2><span class="h2-usuario nombreusuario user-select-none" id="nombreUsuario"></span>, transfiere a tus contactos</h2>
                             </div>
                         </div>
                         <div class="row justify-content-center saldo-row w-100 card-principal">
@@ -117,12 +117,12 @@
                                                                     </nav>
                                                                     <div class="visor-directo">
                                                                         <p class="visor-p">El saldo después de la transferencia será</p>
-                                                                        <p class="span-transfer"><span class="span-visor-p" id="visorSpanTransfer">$ </span></p>
+                                                                        <p class="span-transfer"><span class="span-visor-p" id="visorSpanTransfer">$ </span></p>                                                                    
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer align-content-center justify-content-center">
                                                                     <button type="button" class="btn btn-secondary btn-cerrar" data-bs-dismiss="modal">Cerrar</button>
-                                                                    <button type="button" id="btnTransferir" class="btn btn-confirmar">Transferir</button>
+                                                                    <button type="button" id="btnTransferir" data-bs-dismiss="modal" class="btn btn-confirmar">Transferir</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -154,10 +154,11 @@
                                                                                 <input class="form-control" type="email" placeholder="Correo.electrónico@ejemplo.com" id="emailContacto" aria-label="default input example">
                                                                             </div>
                                                                         </nav>
+                                                                        <span id="spanAlertaContacto"></span>
                                                                     </div>
                                                                     <div class="modal-footer align-content-center justify-content-center">
                                                                         <button type="button" class="btn btn-secondary btn-cerrar" data-bs-dismiss="modal">Cerrar</button>
-                                                                        <button type="button" id="btnNvoContacto" class="btn btn-confirmar">Crear contacto</button>
+                                                                        <button type="button" id="btnNvoContacto" data-bs-dismiss="modal" class="btn btn-confirmar">Crear contacto</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -167,17 +168,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="alerta-fondos">
-                                        <div class="alert alert-danger" role="alert" id="alertaFondos">
-                                            <p>No es posible hacer esta transferencia, fondos insuficientes.</p>
-                                        </div>
-                                    </div>
+                                    
                                     <hr>
                                     <div class="contenedor-ul">
                                         <ul class="list-group list-group-flush user-select-none lista-contactos" id="listaContactos">
-                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, facilis?</li>
-                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, sed?</li>
-                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, accusamus.</li>
+                                            
                                         </ul>
                                     </div>
                                 </div>
@@ -230,7 +225,159 @@
     <footer>
         <p class="copyright user-select-none justify-content-center align-items-center pt-3">2026 © Felipe Calderón. Derechos reservados ®</p>
     </footer>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    /* Confirmar login*/
+    const confirmLog = localStorage.getItem("usuarioLogueado") || false;
+    if (!confirmLog){
+
+        window.location.href = "index.html";
+    }
+
+
+    /* Cerrar sesión*/
+    const cerrarSesion = document.getElementById("btnCerrarSesion");
+    cerrarSesion.addEventListener("click",function(event) {
+
+        event.preventDefault();
+        localStorage.removeItem("usuarioLogueado");
+        window.location.href = "index.html";
+    });
+
+
+    /* Mostrar nombre de usuario en pantallas*/
+    const usuarioInvisible = localStorage.getItem("usuarioLogueado");
+    if (usuarioInvisible !== "") {
+        const usuarios = JSON.parse(usuarioInvisible);
+        const usuarioVisible = usuarios.usuario;
+        document.getElementById("nombreUsuario").textContent = usuarioVisible;
+    }
+
+
+    /* Mostrar saldo actual dinámicamente*/
+    function mostrarSaldo(){
+        const saldoInvisible = localStorage.getItem("usuarioLogueado");
+        if (saldoInvisible !== null){
+            const saldoGet = JSON.parse(saldoInvisible);
+            const saldoVisible = saldoGet.saldo;
+            document.getElementById("saldo").textContent = "$" + saldoVisible.toLocaleString("es-CL");
+        }
+    }
+    mostrarSaldo();
+
+
+    /* Preparar usuario para modificar su dato en memoria*/
+    const usuario = localStorage.getItem("usuarios");
+    const usuarioCompararLocal = JSON.parse(usuario);
+    let usuarioLog = localStorage.getItem("usuarioLogueado");
+    let usuarioComparaLog = JSON.parse(usuarioLog);
+
+    const usuarioActualizado = usuarioCompararLocal.find(u => u.usuario === usuarioComparaLog.usuario);
+
+
+        /* Saldo interactivo en visor post transferencia*/
+    const numTransferencia = document.getElementById("numTransferencia");
+    numTransferencia.addEventListener("input", function(){
+        const monto = Number(numTransferencia.value) || 0;
+        const saldoInteractivo = usuarioActualizado.saldo - monto;
+        if (saldoInteractivo <= 0) {
+            document.getElementById("visorSpanTransfer").innerHTML = `
+                    <div class="alert alert-danger fade show" role="alert">
+                        El monto de la transferencia excede tu saldo.
+                    </div>
+                `;
+        } else {
+            document.getElementById("visorSpanTransfer").textContent = saldoInteractivo.toLocaleString("es-CL");
+        }
+    });
+
+
+
+    /* Crear nuevo contacto */
+    document.getElementById("btnNvoContacto").addEventListener("click", function() {
+        const nombre = document.getElementById("nombreContacto").value.trim();
+        const email = document.getElementById("emailContacto").value.trim();
+
+        if (nombre === "" || email === "") {
+            document.getElementById("spanAlertaContacto").innerHTML = `
+                    <div class="alert alert-danger fade show" role="alert">
+                        Debes ingresar nombre completo y el e-mail de contacto.
+                    </div>
+                `;
+            return;
+        }
+
+        const nuevoContacto = { nombre, email };
+        usuarioComparaLog.contactos.push(nuevoContacto);
+
+
+        /* Actualizar en usuarios globales */
+        function actualizarUsuario() {
+        const usuarios = JSON.parse(localStorage.getItem("usuarios"));
+        const usuarioActualizado = usuarios.find(u => u.usuario === usuarioComparaLog.usuario);
+        usuarioActualizado.contactos = usuarioComparaLog.contactos;
+
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioComparaLog));
+        }
+    });
+
+        /* Elemento para buscar lista de movimiento en el storage y luego mostrarlo en la lista */
+    function mostrarContactos(){
+
+        const listaContactos = document.getElementById("listaContactos");
+        listaContactos.innerHTML = "";
+
+        const usuario = JSON.parse(localStorage.getItem("usuarioLogueado"));
+
+        if (usuario.contactos.length === 0){
+
+            listaContactos.innerHTML = `
+                <li class="list-group-item text-center">
+                    Sin contactos registrados.
+                </li>
+            `;
+
+            return;
+        }
+
+        usuario.contactos.forEach(function(contacto){
+
+            const li = document.createElement("li");
+            const span = document.createElement("span");
+            const btnEliminar = document.createElement("button");
+
+            li.className = "list-group-item";
+            li.innerHTML = `
+                <strong>${contacto.nombre}</strong><br>
+                Monto: $${contacto.email}<br>
+                btnEliminar.textContent = "Eliminar";
+                btnEliminar.classList.add("btn btn-danger btn-dismiss-contact");
+            `;
+            li.appendChild(span);
+            li.appendChild(btnEliminar);
+
+            lista.appendChild(li);
+
+            btnEliminar.addEventListener("click",function(){
+            contacto.splice(index,1)
+
+            actualizarUsuario()
+
+            })
+        });
+
+    }
+
     
+
+})
+
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
