@@ -108,7 +108,7 @@
                                                                         <div class="container-fluid">
                                                                             <form class="container-fluid mb-2" role="search">
                                                                                 <input class="form-control me-2" type="search" placeholder="Busca tu contacto" aria-label="Search" id="buscadorContactos"/>
-                                                                                <button class="btn btn-outline-success" type="button">Buscar</button>
+                                                                                <ul class="lista-resultados mt-2 list-group" id="listaResultados"></ul>
                                                                                 <hr>
                                                                                 <input class="form-control me-2" type="number" placeholder="$0" aria-label="input" id="numTransferencia"/>
                                                                                 <p class="text-transferencia user-select-none">Ingresa el monto de la transferencia</p>
@@ -168,9 +168,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+                                    <span id="spanTransferSuccess"></span>
                                     <hr>
                                     <div class="contenedor-ul">
+                                        <p class="p-ul mb-0">Lista de contactos</p>
                                         <ul class="list-group list-group-flush user-select-none lista-contactos" id="listaContactos">
                                             
                                         </ul>
@@ -277,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const usuarioActualizado = usuarioCompararLocal.find(u => u.usuario === usuarioComparaLog.usuario);
 
 
-        /* Saldo interactivo en visor post transferencia*/
+    /* Saldo interactivo en visor post transferencia*/
     const numTransferencia = document.getElementById("numTransferencia");
     numTransferencia.addEventListener("input", function(){
         const monto = Number(numTransferencia.value) || 0;
@@ -294,84 +295,160 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
+    /* Mostrar contactos en pantalla */
+    function mostrarContactos(){
+        const listaContactos = document.getElementById("listaContactos");
 
-    /* Crear nuevo contacto */
-    document.getElementById("btnNvoContacto").addEventListener("click", function() {
-        const nombre = document.getElementById("nombreContacto").value.trim();
-        const email = document.getElementById("emailContacto").value.trim();
+        listaContactos.innerHTML = "";
 
-        if (nombre === "" || email === "") {
-            document.getElementById("spanAlertaContacto").innerHTML = `
+        usuarioActualizado.contactos.forEach(function(contacto,index){
+            const li = document.createElement("li");
+
+            li.innerHTML = `
+                <div>
+                    <div class="lista-contactos">
+                        Nombre contacto: ${contacto.nombre}
+                        <br>
+                        E-mail: ${contacto.email}
+                    </div>
+                        <button
+                            class="btn btn-danger btn-sm"
+                            onclick="eliminarContacto(${index})">
+                            Eliminar
+                        </button>
+                    <hr>
+                </div>
+            `;
+
+            listaContactos.appendChild(li);
+            
+        });
+
+    }
+    mostrarContactos()
+
+
+    /* Eliminar contacto */
+    function eliminarContacto(index) {
+
+        usuarioActualizado.contactos.splice(index,1);
+        localStorage.setItem("usuarios",JSON.stringify(usuarioCompararLocal));
+
+        usuarioComparaLog.contactos = usuarioActualizado.contactos;
+        localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioComparaLog));
+
+        mostrarContactos()
+    }
+
+
+    /* Confirmar transferencia, crear movimiento en historial y guardar en memoria*/
+    document.getElementById("btnTransferir").addEventListener("click", function(){
+        const monto = Number(numTransferencia.value) || 0;
+        if (monto != 0){
+
+            usuarioActualizado.saldo -= monto;
+            usuarioComparaLog.saldo = usuarioActualizado.saldo;
+
+            /* Crear movimiento en historial */
+            const movimiento = {
+                tipo: "Transferencia",
+                monto: - monto,
+                fecha: new Date().toLocaleString()
+            };
+
+            usuarioComparaLog.movimientos.push(movimiento);
+            usuarioActualizado.movimientos.push(movimiento);
+
+            /* Actualizar datos guardados */
+            localStorage.setItem("usuarios", JSON.stringify(usuarioCompararLocal));
+            localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioComparaLog));
+
+            document.getElementById("spanTransferSuccess").innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    La Transferencia ha sido efectuada correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            mostrarSaldo();
+
+        }
+    });
+
+    /* Crear contacto y guardar en memoria */
+    document.getElementById("btnNvoContacto").addEventListener("click", function(){
+    const nvoContacto = document.getElementById("nombreContacto").value;
+    const nvoEmail = document.getElementById("emailContacto").value;
+
+    if (nvoContacto === "" || nvoEmail === "" || !nvoEmail.includes("@") || !nvoEmail.includes("@")){
+        document.getElementById("spanAlertaContacto").innerHTML = `
                     <div class="alert alert-danger fade show" role="alert">
                         Debes ingresar nombre completo y el e-mail de contacto.
                     </div>
                 `;
             return;
+    }
+
+        const contactoUp = {
+            nombre : nvoContacto,
+            email : nvoEmail
         }
 
-        const nuevoContacto = { nombre, email };
-        usuarioComparaLog.contactos.push(nuevoContacto);
+        usuarioActualizado.contactos.push(contactoUp);
+        localStorage.setItem("usuarios",JSON.stringify(usuarioCompararLocal));
 
+        usuarioComparaLog.contactos = usuarioActualizado.contactos;
+        localStorage.setItem("usuarioLogueado",JSON.stringify(usuarioComparaLog));
 
-        /* Actualizar en usuarios globales */
-        function actualizarUsuario() {
-        const usuarios = JSON.parse(localStorage.getItem("usuarios"));
-        const usuarioActualizado = usuarios.find(u => u.usuario === usuarioComparaLog.usuario);
-        usuarioActualizado.contactos = usuarioComparaLog.contactos;
-
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioComparaLog));
-        }
+        document.getElementById("spanTransferSuccess").innerHTML=`
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    El contacto ha sido creado correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        
+        document.getElementById("nombreContacto").value = "";
+        document.getElementById("emailContacto").value = "";
+        
+        mostrarContactos()
     });
 
-        /* Elemento para buscar lista de movimiento en el storage y luego mostrarlo en la lista */
-    function mostrarContactos(){
 
-        const listaContactos = document.getElementById("listaContactos");
-        listaContactos.innerHTML = "";
+    /* Buscador de contactos predictivo */
+    const buscador = document.getElementById("buscadorContactos");
+    const listaResultados = document.getElementById("listaResultados")
+    const inputDestinatario = document.getElementById("destinatarioTransferencia");
 
-        const usuario = JSON.parse(localStorage.getItem("usuarioLogueado"));
+    buscador.addEventListener("input",function(){
+        const textoBuscado = buscador.value.trim().toLowerCase();
 
-        if (usuario.contactos.length === 0){
+        listaResultados.innerHTML = "";
 
-            listaContactos.innerHTML = `
-                <li class="list-group-item text-center">
-                    Sin contactos registrados.
-                </li>
-            `;
-
+        if (textoBuscado === ""){
             return;
         }
 
-        usuario.contactos.forEach(function(contacto){
+        const coincidencias = usuarioActualizado.contactos.filter(function(contacto){
+            return contacto.nombre.toLowerCase().includes(textoBuscado);
 
-            const li = document.createElement("li");
-            const span = document.createElement("span");
-            const btnEliminar = document.createElement("button");
-
-            li.className = "list-group-item";
-            li.innerHTML = `
-                <strong>${contacto.nombre}</strong><br>
-                Monto: $${contacto.email}<br>
-                btnEliminar.textContent = "Eliminar";
-                btnEliminar.classList.add("btn btn-danger btn-dismiss-contact");
-            `;
-            li.appendChild(span);
-            li.appendChild(btnEliminar);
-
-            lista.appendChild(li);
-
-            btnEliminar.addEventListener("click",function(){
-            contacto.splice(index,1)
-
-            actualizarUsuario()
-
-            })
         });
 
-    }
+        coincidencias.forEach(function(contacto){
+            const li = document.createElement("li");
+            li.className = "list-group-item list-group-item-action";
+            li.textContent = contacto.nombre;
 
-    
+            li.addEventListener("click",function(){
+                inputDestinatario.value = contacto.nombre;
+                buscador.value = "";
+                listaResultados.innerHTML = "";
+
+            });
+        
+        listaResultados.appendChild(li);
+        });
+
+    });
+
 
 })
 

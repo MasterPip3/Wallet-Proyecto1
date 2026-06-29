@@ -178,10 +178,22 @@ main {
     list-style: none;
     color: var(--color-cuarto);
     font-weight: normal;
-    font-size: medium;
+    font-size: small;
     overflow-y: auto;
     height: 400px;
     flex: 1;
+}
+
+.lista-contactos {
+    display: block;
+    align-items: center;
+    justify-content: stretch;
+    max-height: fit-content;
+}
+
+.lista-resultados {
+    max-height:200px;
+    overflow-y:auto;
 }
 
 .saldo-row {
@@ -221,7 +233,7 @@ main {
 }
 
 .saldo-valor {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
     color: green;
 }

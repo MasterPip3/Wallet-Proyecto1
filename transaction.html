@@ -189,8 +189,8 @@ document.addEventListener("DOMContentLoaded", function(){
             li.className = "list-group-item";
 
             li.innerHTML = `
-                <strong>${movimiento.tipo}</strong><br>
-                Monto: $${movimiento.monto}<br>
+                ${movimiento.tipo}
+                Monto: $${movimiento.monto}
                 Fecha: ${movimiento.fecha}
             `;
 
